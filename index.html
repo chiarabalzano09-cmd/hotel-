@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>The Grand Aesthetic Hotel — Direzione</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; user-select: none; }
+        body {
+            background-color: #0f0e13;
+            color: #f2edf9;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        .hotel-wrapper {
+            width: 100%;
+            max-width: 900px;
+            height: 100vh;
+            max-height: 650px;
+            background: #17151f;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+            overflow: hidden;
+        }
+        /* Top Bar / Status */
+        .top-bar {
+            background: #1f1b2c;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            font-size: 14px;
+        }
+        .hotel-title { font-weight: 600; letter-spacing: 0.5px; color: #e2d1f9; }
+        .stats-group { display: flex; gap: 20px; }
+        .stat-item span { color: #d4af37; font-weight: bold; }
+
+        /* Main Workspace (PC Monitor) */
+        .pc-screen {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #121118;
+            overflow: hidden;
+        }
+
+        /* Tabs Navigation */
+        .pc-tabs {
+            display: flex;
+            background: #1a1822;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 12px;
+            background: transparent;
+            border: none;
+            color: #8c859b;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-bottom: 2px solid transparent;
+        }
+        .tab-btn.active {
+            color: #f2edf9;
+            background: #121118;
+            border-bottom-color: #d4af37;
+        }
+
+        /* Tab Content Panes */
+        .tab-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: none;
+        }
+        .tab-content.active { display: block; }
+
+        /* General Styling inside Tabs */
+        h3 { font-size: 16px; margin-bottom: 12px; color: #e2d1f9; font-weight: 500; }
+        p { font-size: 13px; color: #a39bb5; margin-bottom: 15px; }
+
+        .card-box {
+            background: #1b1924;
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .card-info h4 { font-size: 14px; color: #fff; margin-bottom: 4px; }
+        .card-info p { font-size: 12px; margin: 0; color: #8c859b; }
+
+        .action-btn {
+            background: #d4af37;
+            color: #121118;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 12px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .action-btn:hover { opacity: 0.9; }
+        .action-btn.secondary {
+            background: #2b2836;
+            color: #d4af37;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+        }
+
+        /* Camera Grid */
+        .cam-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        .cam-box {
+            background: #0a090e;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 12px;
+            position: relative;
+        }
+        .cam-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: #ff5f56;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        .cam-screen-view {
+            height: 90px;
+            background: #16141d;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 10px;
+            font-size: 12px;
+            color: #b8b2c7;
+            font-style: italic;
+        }
+
+        /* Log / Hall Activity Bar */
+        .hall-log {
+            background: #15131c;
+            padding: 10px 20px;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            font-size: 12px;
+            color: #a39bb5;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .hall-log b { color: #d4af37; }
+    </style>
+</head>
+<body>
+
+    <div class="hotel-wrapper">
+        <!-- Top Status Bar -->
+        <div class="top-bar">
+            <div class="hotel-title">🛎️ The Grand Aesthetic Hotel</div>
+            <div class="stats-group">
+                <div class="stat-item">Fondi: <span id="ui-money">€ 2.500</span></div>
+                <div class="stat-item">Reputazione: <span id="ui-reputation">98%</span></div>
+            </div>
+        </div>
+
+        <!-- PC Screen Interface -->
+        <div class="pc-screen">
+            <!-- Tabs Menu -->
+            <div class="pc-tabs">
+                <button class="tab-btn active" onclick="switchTab('frontdesk')">📅 Front Desk</button>
+                <button class="tab-btn" onclick="switchTab('restaurant')">🍳 Ristorante</button>
+                <button class="tab-btn" onclick="switchTab('cassa')">💶 Cassa & Bollette</button>
+                <button class="tab-btn" onclick="switchTab('cameras')">👁️ Camere (CCTV)</button>
+            </div>
+
+            <!-- TAB 1: Front Desk / Arrivi -->
+            <div id="tab-frontdesk" class="tab-content active">
+                <h3>Registro Arrivi e Prenotazioni</h3>
+                <p>Gestisci i clienti in attesa di check-in alla reception.</p>
+                <div id="guests-list">
+                    <!-- Generato dinamicamente -->
+                </div>
+            </div>
+
+            <!-- TAB 2: Ristorante / Room Service -->
+            <div id="tab-restaurant" class="tab-content">
+                <h3>Servizio Ristorante & Colazioni</h3>
+                <p>Gli ospiti hanno ordinato pietanze dalla cucina. Coordinati per servirli in tempo.</p>
+                <div id="orders-list">
+                    <!-- Generato dinamicamente -->
+                </div>
+            </div>
+
+            <!-- TAB 3: Cassa & Contabilità -->
+            <div id="tab-cassa" class="tab-content">
+                <h3>Gestione Finanziaria e Utenze</h3>
+                <p>Paga le spese di gestione per mantenere l'hotel operativo e di lusso.</p>
+                <div class="card-box">
+                    <div class="card-info">
+                        <h4>Bolletta Elettricità & Illuminazione</h4>
+                        <p>Costo: € 300 — Mantiene l'atmosfera cozy attiva.</p>
+                    </div>
+                    <button class="action-btn" onclick="payBill(300, 'Luce')">Salda</button>
+                </div>
+                <div class="card-box">
+                    <div class="card-info">
+                        <h4>Fornitura Biancheria & Spa</h4>
+                        <p>Costo: € 450 — Set di lenzuola in cotone peruviano.</p>
+                    </div>
+                    <button class="action-btn" onclick="payBill(450, 'Biancheria')">Salda</button>
+                </div>
+            </div>
+
+            <!-- TAB 4: Telecamere Interne (CCTV) -->
+            <div id="tab-cameras" class="tab-content">
+                <h3>Sistema di Monitoraggio Interno (CCTV)</h3>
+                <p>Controlla cosa fanno gli ospiti nelle camere in modo discreto...</p>
+                <div class="cam-grid">
+                    <div class="cam-box">
+                        <div class="cam-header"><span>CAM 101 - Suite Deluxe</span><span>● LIVE</span></div>
+                        <div class="cam-screen-view" id="cam-101">La signora Dupont sta dipingendo un quadro vicino alla finestra.</div>
+                    </div>
+                    <div class="cam-box">
+                        <div class="cam-header"><span>CAM 104 - Master Room</span><span>● LIVE</span></div>
+                        <div class="cam-screen-view" id="cam-104">Il signor Vance parla al telefono guardando fuori dalla pioggia.</div>
+                    </div>
+                    <div class="cam-box">
+                        <div class="cam-header"><span>CAM 202 - Stanza Standard</span><span>● LIVE</span></div>
+                        <div class="cam-screen-view" id="cam-202">Due ospiti stanno pianificando un itinerario turistico.</div>
+                    </div>
+                    <div class="cam-box">
+                        <div class="cam-header"><span>CAM 205 - Attico Panoramico</span><span>● LIVE</span></div>
+                        <div class="cam-screen-view" id="cam-205">La stanza è vuota. Sul tavolo c'è una lettera sigillata aperta.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hall Log / Attività in tempo reale -->
+        <div class="hall-log">
+            <span>Stato Hall:</span>
+            <span id="hall-status-text">Seduta alla tua scrivania. La hall è tranquilla e profuma di legno di sandalo.</span>
+        </div>
+    </div>
+
+    <script>
+        // Stato del gioco
+        let money = 2500;
+        let reputation = 98;
+
+        // Dati Clienti in arrivo
+        let incomingGuests = [
+            { id: 1, name: "Dr. Arthur Sterling", room: "Suite 101", deposit: 350 },
+            { id: 2, name: "Chloe Moreau (Modella)", room: "Attico 205", skip: false, deposit: 600 }
+        ];
+
+        // Ordini Ristorante
+        let restaurantOrders = [
+            { id: 1, item: "2x Calici di Chianti & Tagliere", room: "Stanza 104", price: 65 },
+            { id: 2, item: "Colazione Continentale al Letto", room: "Suite 101", price: 40 }
+        ];
+
+        function updateUI() {
+            document.getElementById('ui-money').innerText = `€ ${money.toLocaleString()}`;
+            document.getElementById('ui-reputation').innerText = `${reputation}%`;
+            renderGuests();
+            renderOrders();
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById('tab-' + tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        function renderGuests() {
+            const container = document.getElementById('guests-list');
+            if (incomingGuests.length === 0) {
+                container.innerHTML = `<p>Nessun cliente in attesa alla reception al momento. Goditi la calma.</p>`;
+                return;
+            }
+            container.innerHTML = incomingGuests.map(g => `
+                <div class="card-box">
+                    <div class="card-info">
+                        <h4>${g.name}</h4>
+                        <p>Richiesta: Assegnazione ${g.room} — Deposito cauzionale: €${g.deposit}</p>
+                    </div>
+                    <button class="action-btn" onclick="checkIn(${g.id})">Effettua Check-In</button>
+                </div>
+            `).join('');
+        }
+
+        function renderOrders() {
+            const container = document.getElementById('orders-list');
+            if (restaurantOrders.length === 0) {
+                container.innerHTML = `<p>La cucina non ha ordini pendenti in questo momento.</p>`;
+                return;
+            }
+            container.innerHTML = restaurantOrders.map(o => `
+                <div class="card-box">
+                    <div class="card-info">
+                        <h4>${o.item}</h4>
+                        <p>Destinazione: ${o.room} — Conto: €${o.price}</p>
+                    </div>
+                    <button class="action-btn" onclick="serveOrder(${o.id})">Invia Room Service</button>
+                </div>
+            `).join('');
+        }
+
+        function checkIn(id) {
+            const guest = incomingGuests.find(g => g.id === id);
+            money += guest.deposit;
+            incomingGuests = incomingGuests.filter(g => g.id !== id);
+            setHallStatus(`Hai accolto con eleganza <b>${guest.name}</b> e registrato il soggiorno nella ${guest.room}.`);
+            updateUI();
+        }
+
+        function serveOrder(id) {
+            const order = restaurantOrders.find(o => o.id === id);
+            money += order.price;
+            restaurantOrders = restaurantOrders.filter(o => o.id !== id);
+            setHallStatus(`Il servizio in camera per <b>${order.room}</b> è stato consegnato con successo.`);
+            updateUI();
+        }
+
+        function payBill(amount, name) {
+            if (money >= amount) {
+                money -= amount;
+                setHallStatus(`Hai saldato la fattura per <b>${name}</b> (€${amount}). L'hotel è impeccabile.`);
+                updateUI();
+            } else {
+                alert("Fondi insufficienti in cassa!");
+            }
+        }
+
+        function setHallStatus(html) {
+            document.getElementById('hall-status-text').innerHTML = html;
+        }
+
+        // Avvio iniziale
+        updateUI();
+    </script>
+</body>
+</html>
